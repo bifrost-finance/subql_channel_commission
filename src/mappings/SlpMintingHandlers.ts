@@ -1,5 +1,5 @@
 import { makeSureAccount, getPricision } from "./utils";
-import { SubstrateEvent } from "@subql/types";
+import { SubstrateEvent, SubstrateExtrinsic } from "@subql/types";
 import { Balance, AccountId } from "@polkadot/types/interfaces";
 import { Add, Subtract } from "../types";
 import { BigNumber } from "bignumber.js";

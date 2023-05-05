@@ -20,88 +20,30 @@ network:
     file: ./dist/chaintypes.js
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 3420650
+    startBlock: 4091780
     mapping:
       file: ./dist/index.js
       handlers:
-      # Update current block
-        - handler: handleBlock
-          kind: substrate/BlockHandler
-      # # ParachainStaking module handlers
-      #   - handler: handleParachainStakingDelegation
-      #     kind: substrate/EventHandler
-      #     filter:
-      #       module: parachainStaking
-      #       method: Delegation
-      #   - handler: handleParachainStakingDelegationIncreased
-      #     kind: substrate/EventHandler
-      #     filter:
-      #       module: parachainStaking
-      #       method: DelegationIncreased
-      #   - handler: handleParachainStakingDelegationDecreased
-      #     kind: substrate/EventHandler
-      #     filter:
-      #       module: parachainStaking
-      #       method: DelegationDecreased
-      #   - handler: handleParachainStakingDelegationRevoked
-          # kind: substrate/EventHandler
-          # filter:
-          #   module: parachainStaking
-          #   method: DelegationRevoked
-      #VtokenMinting module handlers
-        - handler: handleVtokenMintingMinted
-          kind: substrate/EventHandler
+        # #VtokenMinting module handlers
+        # - handler: handleVtokenMintingMinted
+        #   kind: substrate/EventHandler
+        #   filter:
+        #     module: vtokenMinting
+        #     method: Minted
+        # - handler: handleVtokenMintingRedeemed
+        #   kind: substrate/EventHandler
+        #   filter:
+        #     module: vtokenMinting
+        #     method: Redeemed
+        # #Currencies module handlers
+        # - handler: handleVtokenTransferOut
+        #   kind: substrate/EventHandler
+        #   filter:
+        #     module: tokens
+        #     method: Transfer
+        # Utility module handlers
+        - handler: handleUtilityBatchAllCall
+          kind: substrate/CallHandler
           filter:
-            module: vtokenMinting
-            method: Minted
-        - handler: handleVtokenMintingRedeemed
-          kind: substrate/EventHandler
-          filter:
-            module: vtokenMinting
-            method: Redeemed
-      #Currencies module handlers
-        - handler: handleVtokenTransferOut
-          kind: substrate/EventHandler
-          filter:
-            module: tokens
-            method: Transfer
-      # # VstokenConversion module handlers
-      #   - handler: handleVstokenConversionVsbondConvertToVsksm
-      #     kind: substrate/EventHandler
-      #     filter:
-      #       module: vstokenConversion
-      #       method: VsbondConvertToVsksm
-      #   - handler: handleVstokenConversionVsksmConvertToVsbond
-      #     kind: substrate/EventHandler
-      #     filter:
-      #       module: vstokenConversion
-      #       method: VsksmConvertToVsbond
-      # # Salp and Salp-lite modules handlers
-      #   - handler: handleSalpContributed
-      #     kind: substrate/EventHandler
-      #     filter:
-      #       module: salp
-      #       method: Contributed
-      #   - handler: handleSalpLiteIssued
-      #     kind: substrate/EventHandler
-      #     filter:
-      #       module: salpLite
-      #       method: Issued
-      # # ZenlinkProtocol module handlers
-      #   - handler: handleZenlinkProtocolLiquidityAdded
-      #     kind: substrate/EventHandler
-      #     filter:
-      #       module: zenlinkProtocol
-      #       method: LiquidityAdded
-      #   - handler: handleZenlinkProtocolLiquidityRemoved
-      #     kind: substrate/EventHandler
-      #     filter:
-      #       module: zenlinkProtocol
-      #       method: LiquidityRemoved
-      # # Buy KSM bond. Identified by Utility Batch call.
-      #   - handler: handleSystemRemarkWithEvent
-      #     kind: substrate/CallHandler
-      #     filter:
-      #       module: utility
-      #       method: batchAll
-      #       success: true
+            module: utility
+            method: BatchAll
