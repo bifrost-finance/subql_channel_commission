@@ -23,15 +23,13 @@ export async function handleSlpHostingFeeCharged(
   } = evt;
 
   const tokenName = await getTokenName(currencyId);
-  const amount = BigInt((tokenAmount as Balance).toString());
+  const amount = (tokenAmount as Balance).toString();
 
   record.event = "HostingFeeCharged";
   record.tokenId = tokenName;
   record.amount = amount;
   record.blockHeight = blockNumber;
   record.timestamp = event.block.timestamp;
-
-  logger.info(`${record}`);
 
   await record.save();
 }

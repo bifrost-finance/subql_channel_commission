@@ -10,11 +10,11 @@ type Event @entity {
 
   event: String! #Event name
 
-  account: Account! #Foreign key to Account Entity
+  account: String! #Foreign key to Account Entity
 
   vtokenId: String! #vToken symbol
 
-  amount: BigInt! #Amount of BNC voted
+  amount: String! #Amount of BNC voted
 
   blockHeight: Int! #Block height of the event
 
@@ -33,7 +33,7 @@ type HostingFeeChargedEvent @entity {
 
   tokenId: String! #Token symbol
 
-  amount: BigInt! #Amount of BNC voted
+  amount: String! #Amount of BNC voted
 
   blockHeight: Int! #Block height of the event
 
@@ -47,13 +47,13 @@ type CommissionPaid @entity {
 
   event: String! #Event name
 
-  fromAccount: Account!
+  fromAccount: String!
 
-  toAccount: Account!
+  toAccount: String!
 
   tokenId: String! #Token symbol
 
-  amount: BigInt! #Amount of BNC voted
+  amount: String! #Amount of BNC voted
 
   blockHeight: Int! #Block height of the event
 

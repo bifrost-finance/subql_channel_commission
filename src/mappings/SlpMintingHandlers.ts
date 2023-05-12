@@ -1,4 +1,4 @@
-import { makeSureAccount, getTokenName } from "./utils";
+import { getTokenName } from "./utils";
 import { SubstrateEvent } from "@subql/types";
 import { Balance, AccountId } from "@polkadot/types/interfaces";
 import { Event } from "../types";
@@ -39,18 +39,15 @@ export async function handleVtokenMintingMinted(
     // token type
     const tokenName = await getTokenName(currencyId);
     const account = (address as AccountId).toString();
-    const amount = BigInt((vtokenAmount as Balance).toString());
+    const amount = (vtokenAmount as Balance).toString();
 
-    await makeSureAccount(account);
     record.event = "Mint";
-    record.accountId = account;
+    record.account = account;
     record.vtokenId = `V${tokenName.toUpperCase()}`;
     record.amount = amount;
     record.blockHeight = blockNumber;
     record.timestamp = event.block.timestamp;
     record.channelCode = channelCode;
-
-    logger.info(`${record}`);
 
     await record.save();
   }
@@ -73,18 +70,15 @@ export async function handleVtokenMintingRedeemed(
 
   const tokenName = await getTokenName(currencyId);
   const account = (address as AccountId).toString();
-  const amount = BigInt((vtokenAmount as Balance).toString());
+  const amount = (vtokenAmount as Balance).toString();
 
-  await makeSureAccount(account);
   record.event = "Redeem";
-  record.accountId = account;
+  record.account = account;
   record.vtokenId = `V${tokenName.toUpperCase()}`;
   record.amount = amount;
   record.blockHeight = blockNumber;
   record.timestamp = event.block.timestamp;
   record.channelCode = null;
-
-  logger.info(`${record}`);
 
   await record.save();
 }

@@ -1,7 +1,7 @@
 import { SubstrateEvent } from "@subql/types";
 import { Event, CommissionPaid } from "../types";
 import { Balance, AccountId } from "@polkadot/types/interfaces";
-import { makeSureAccount, hex_to_ascii, PAY_OUT_ACCOUNT } from "./utils";
+import { hex_to_ascii, PAY_OUT_ACCOUNT } from "./utils";
 
 // Handing talbe【Tokens】, Event【Transfer】
 export async function handleVtokenTransferOut(
@@ -65,7 +65,7 @@ export async function handleVtokenTransferOut(
     !poolAccountList.includes((address as AccountId).toString())
   ) {
     const account = (address as AccountId).toString();
-    const amount = BigInt((vtokenAmount as Balance).toString());
+    const amount = (vtokenAmount as Balance).toString();
 
     let token;
     let vtoken;
@@ -86,16 +86,13 @@ export async function handleVtokenTransferOut(
       token = vtoken.substring(1);
     }
 
-    await makeSureAccount(account);
     record.event = "TransferOut";
-    record.accountId = account;
+    record.account = account;
     record.vtokenId = vtoken;
     record.amount = amount;
     record.blockHeight = blockNumber;
     record.timestamp = event.block.timestamp;
     record.channelCode = null;
-
-    logger.info(`${record}`);
 
     await record.save();
   }
@@ -127,7 +124,7 @@ export async function handleCommissionPaid(
     (tokenType.startsWith("TOKEN") || tokenType.startsWith("NATIVE")) &&
     account == PAY_OUT_ACCOUNT
   ) {
-    const amount = BigInt((tokenAmount as Balance).toString());
+    const amount = (tokenAmount as Balance).toString();
     const toAccount = (to as AccountId).toString();
 
     let token;
@@ -145,16 +142,13 @@ export async function handleCommissionPaid(
       token = hex_to_ascii(meta.symbol).toUpperCase();
     }
 
-    await makeSureAccount(account);
     record.event = "Transfer";
-    record.fromAccountId = account;
-    record.toAccountId = toAccount;
+    record.fromAccount = account;
+    record.toAccount = toAccount;
     record.tokenId = token;
     record.amount = amount;
     record.blockHeight = blockNumber;
     record.timestamp = event.block.timestamp;
-
-    logger.info(`${record}`);
 
     await record.save();
   }
