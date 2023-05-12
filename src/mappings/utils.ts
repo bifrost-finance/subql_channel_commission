@@ -1,6 +1,10 @@
 import { Account } from "../types";
 import { BigNumber } from "bignumber.js";
 
+// 佣金发放账户
+export const PAY_OUT_ACCOUNT =
+  "gXCcrjjFX3RPyhHYgwZDmw8oe4JFpd5anko3nTY8VrmnJpe";
+
 // token precisions
 export const TEN_ZEROS = 10000000000;
 export const TWELVE_ZEROS = 1000000000000;
@@ -105,19 +109,36 @@ export function convertFromZenlinkAssetId(id: number) {
   return { tokenType, tokenName, prefix };
 }
 
-export function getPricision(token: string) {
-  switch (token) {
-    case "BNC":
-      return new BigNumber(TWELVE_ZEROS);
-    case "KSM":
-      return new BigNumber(TWELVE_ZEROS);
-    case "DOT":
-      return new BigNumber(TEN_ZEROS);
-    case "MOVR":
-      return new BigNumber(EIGHTEEN_ZEROS);
-    case "GLMR":
-      return new BigNumber(EIGHTEEN_ZEROS);
-    default:
-      return new BigNumber(TWELVE_ZEROS);
+// hex to string
+export function hex_to_ascii(str1) {
+  var hex = str1.toString();
+  if (hex.startsWith("0x")) {
+    hex = hex.substring(2, hex.length);
   }
+  var str = "";
+  for (var n = 0; n < hex.length; n += 2) {
+    str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+  }
+  return str;
+}
+
+// get token name in string
+export async function getTokenName(currencyId) {
+  let tokenName;
+
+  if (currencyId.token || currencyId.native) {
+    tokenName = currencyId.token ? currencyId.token : currencyId.native;
+    // token2 type
+  } else {
+    let tokenId = currencyId.token2;
+
+    let metadata = (
+      await api.query.assetRegistry.currencyMetadatas({ Token2: tokenId })
+    ).toString();
+
+    let meta = JSON.parse(metadata);
+    tokenName = hex_to_ascii(meta.symbol).toUpperCase();
+  }
+
+  return tokenName;
 }

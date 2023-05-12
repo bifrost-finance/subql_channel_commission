@@ -1,8 +1,7 @@
 import { SubstrateEvent } from "@subql/types";
-import { BigNumber } from "bignumber.js";
-import { Subtract } from "../types";
+import { Event, CommissionPaid } from "../types";
 import { Balance, AccountId } from "@polkadot/types/interfaces";
-import { makeSureAccount, getPricision } from "./utils";
+import { makeSureAccount, hex_to_ascii, PAY_OUT_ACCOUNT } from "./utils";
 
 // Handing talbe【Tokens】, Event【Transfer】
 export async function handleVtokenTransferOut(
@@ -12,9 +11,7 @@ export async function handleVtokenTransferOut(
   const blockNumber = event.block.block.header.number.toNumber();
   const evt = JSON.parse(JSON.stringify(event));
   //Create the record by constructing id from blockNumber + eventIndex
-  const record = new Subtract(
-    `${blockNumber.toString()}-${event.idx.toString()}`
-  );
+  const record = new Event(`${blockNumber.toString()}-${event.idx.toString()}`);
   const {
     event: {
       data: [currencyId, address, to, vtokenAmount],
@@ -33,7 +30,7 @@ export async function handleVtokenTransferOut(
   // "eCSrvbA5gGMTkdAd9tM42mCMATj9cu4JVEYn2ADweAWYtUH" is the VKSM single token liquidity-mining pool account for mainnet. pool id 71.
   // "eCSrvbA5gGLejANY2YTH6rTd7JxtybT57MyGfGdfqbBPVdZ" is the VKSM single token liquidity-mining pool account for mainnet.
   // "eCSrvbA5gGMTkdAd9ttY5rNa9p84j6omq7ZsuXtsHuy5uox" is the VKSM single token liquidity-mining pool account for mainnet. pool id 73.
-  // "eCSrvaystgdffuJxPVRct68qJUZs1sFz762d7d37KJvb7Pz" is the VDOT-DOT zenlink swap pool for bifrost-polkadot.
+  // "eCSrvaystgdffuJxPVRct68qJUZs1sFz762d7d37KJvb7Pz" is the VDOT-DOT zenlink pool for bifrost-polkadot.
   // "eCSrvbA5gGLejANY2XNJzg7B8cB4mBx8Rbw4tXHpY6GK5YE" is the vDOT farming Pool.
   // "eCSrvaystgdffuJxPVQfmrQY3XBfm6FPSBj1nJwmT48ASum" is the VMOVR farming pool account form bifrost-kusama.
   // "eCSrvaystgdffuJxPVZ7pEK8ZMmZ7Nwg2144eZYgWdx4g6v" is the VBNC farming pool account form bifrost-kusama.
@@ -61,52 +58,99 @@ export async function handleVtokenTransferOut(
     "eCSrvbA5gGLejANY2bSSPqvrYk8w4i5AVhaL2ppkvDCMYFi",
   ];
 
-  // If it is vtoken and the "to"+ "from" addresses are not vtoken swap pool account and not treasury account.
+  // If it is vtoken2 and the "to"+ "from" addresses are not vtoken swap pool account and not treasury account.
   if (
-    tokenType.startsWith("VT") &&
+    tokenType.startsWith("VTOKEN") &&
     !poolAccountList.includes((to as AccountId).toString()) &&
     !poolAccountList.includes((address as AccountId).toString())
   ) {
-    const token = Object.values(currencyId)[0].toString().toUpperCase();
-    const vtoken = "V".concat(token);
     const account = (address as AccountId).toString();
     const amount = BigInt((vtokenAmount as Balance).toString());
-    // Get VKSM issuance storage.
-    const vtokenIssuance = new BigNumber(
-      (await api.query.tokens.totalIssuance({ VToken: token })).toString()
-    );
-    // Get KSM pooltoken storage.
-    let poolToken;
-    if (token == "BNC") {
-      poolToken = new BigNumber(
-        (await api.query.vtokenMinting.tokenPool({ Native: token })).toString()
-      );
-    } else {
-      poolToken = new BigNumber(
-        (await api.query.vtokenMinting.tokenPool({ Token: token })).toString()
-      );
-    }
-    // Calculate exchange rate.
-    let exchangeRate = new BigNumber(1);
-    if (vtokenIssuance > new BigNumber(0)) {
-      exchangeRate = poolToken.div(vtokenIssuance);
-    }
 
-    const precision = getPricision(token);
-    const base = new BigNumber(amount.toString())
-      .dividedBy(precision)
-      .multipliedBy(exchangeRate)
-      .multipliedBy(-1);
+    let token;
+    let vtoken;
+    if (tokenType == "VTOKEN") {
+      token = Object.values(currencyId)[0].toString().toUpperCase();
+      vtoken = "V".concat(token);
+
+      // "VTOKEN2"
+    } else {
+      let tokenId = parseInt(Object.values(currencyId)[0] as string);
+
+      let metadata = (
+        await api.query.assetRegistry.currencyMetadatas({ VToken2: tokenId })
+      ).toString();
+
+      let meta = JSON.parse(metadata);
+      vtoken = hex_to_ascii(meta.symbol).toUpperCase();
+      token = vtoken.substring(1);
+    }
 
     await makeSureAccount(account);
+    record.event = "TransferOut";
     record.accountId = account;
-    record.event = "TransferredOut";
-    record.token = vtoken;
+    record.vtokenId = vtoken;
     record.amount = amount;
     record.blockHeight = blockNumber;
     record.timestamp = event.block.timestamp;
-    record.exchangeRate = exchangeRate.toNumber();
-    record.base = base.toNumber();
+    record.channelCode = null;
+
+    await record.save();
+  }
+}
+
+// Handing talbe【Tokens】, Event【Transfer】
+// 某个固定账号转出的所有token
+export async function handleCommissionPaid(
+  event: SubstrateEvent
+): Promise<void> {
+  //   logger.info(`${event}`);
+  const blockNumber = event.block.block.header.number.toNumber();
+  const evt = JSON.parse(JSON.stringify(event));
+  //Create the record by constructing id from blockNumber + eventIndex
+  const record = new CommissionPaid(
+    `${blockNumber.toString()}-${event.idx.toString()}`
+  );
+  const {
+    event: {
+      data: [currencyId, address, to, tokenAmount],
+    },
+  } = evt;
+
+  const tokenType = Object.keys(currencyId)[0].toUpperCase();
+  const account = (address as AccountId).toString();
+
+  // If it is vtoken2 and the "to"+ "from" addresses are not vtoken swap pool account and not treasury account.
+  if (
+    (tokenType.startsWith("TOKEN") || tokenType.startsWith("NATIVE")) &&
+    account == PAY_OUT_ACCOUNT
+  ) {
+    const amount = BigInt((tokenAmount as Balance).toString());
+    const toAccount = (to as AccountId).toString();
+
+    let token;
+    if (tokenType == "TOKEN" || tokenType == "NATIVE") {
+      token = Object.values(currencyId)[0].toString().toUpperCase();
+      // "TOKEN2"
+    } else {
+      let tokenId = parseInt(Object.values(currencyId)[0] as string);
+
+      let metadata = (
+        await api.query.assetRegistry.currencyMetadatas({ Token2: tokenId })
+      ).toString();
+
+      let meta = JSON.parse(metadata);
+      token = hex_to_ascii(meta.symbol).toUpperCase();
+    }
+
+    await makeSureAccount(account);
+    record.event = "Transfer";
+    record.fromAccountId = account;
+    record.toAccountId = toAccount;
+    record.tokenId = token;
+    record.amount = amount;
+    record.blockHeight = blockNumber;
+    record.timestamp = event.block.timestamp;
 
     await record.save();
   }
