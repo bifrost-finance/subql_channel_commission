@@ -50,6 +50,8 @@ export async function handleVtokenMintingMinted(
     record.timestamp = event.block.timestamp;
     record.channelCode = channelCode;
 
+    logger.info(`${record}`);
+
     await record.save();
   }
 }
@@ -81,6 +83,8 @@ export async function handleVtokenMintingRedeemed(
   record.blockHeight = blockNumber;
   record.timestamp = event.block.timestamp;
   record.channelCode = null;
+
+  logger.info(`${record}`);
 
   await record.save();
 }

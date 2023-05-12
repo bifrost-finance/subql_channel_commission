@@ -31,5 +31,7 @@ export async function handleSlpHostingFeeCharged(
   record.blockHeight = blockNumber;
   record.timestamp = event.block.timestamp;
 
+  logger.info(`${record}`);
+
   await record.save();
 }

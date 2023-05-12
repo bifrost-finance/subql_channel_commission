@@ -95,6 +95,8 @@ export async function handleVtokenTransferOut(
     record.timestamp = event.block.timestamp;
     record.channelCode = null;
 
+    logger.info(`${record}`);
+
     await record.save();
   }
 }
@@ -151,6 +153,8 @@ export async function handleCommissionPaid(
     record.amount = amount;
     record.blockHeight = blockNumber;
     record.timestamp = event.block.timestamp;
+
+    logger.info(`${record}`);
 
     await record.save();
   }
