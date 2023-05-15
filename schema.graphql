@@ -1,16 +1,10 @@
-type Account @entity {
-
-  id: ID! #AccountId
-}
-
-
 type Event @entity {
 
   id: ID! #id is a required field
 
   event: String! #Event name
 
-  account: String! #Foreign key to Account Entity
+  account: String!
 
   vtokenId: String! #vToken symbol
 

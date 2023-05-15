@@ -1,6 +1,3 @@
-import { Account } from "../types";
-import { BigNumber } from "bignumber.js";
-
 // 佣金发放账户
 export const PAY_OUT_ACCOUNT =
   "gXCcrjjFX3RPyhHYgwZDmw8oe4JFpd5anko3nTY8VrmnJpe";
@@ -9,15 +6,6 @@ export const PAY_OUT_ACCOUNT =
 export const TEN_ZEROS = 10000000000;
 export const TWELVE_ZEROS = 1000000000000;
 export const EIGHTEEN_ZEROS = 1000000000000000000;
-
-// If the account doesn't exist, create one in the Account table.
-export async function makeSureAccount(account: string): Promise<void> {
-  const checkAccount = await Account.get(account);
-
-  if (!checkAccount) {
-    await new Account(account).save();
-  }
-}
 
 export function sortZenlinkAssetId(id_1: number, id_2: number) {
   let c_discr_1 = (id_1 & 0x0000_0000_0000_ff00) >> 8;
