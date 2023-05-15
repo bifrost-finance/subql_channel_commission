@@ -29,7 +29,7 @@ export async function handleSlpHostingFeeCharged(
   record.tokenId = tokenName;
   record.amount = amount;
   record.blockHeight = blockNumber;
-  record.timestamp = event.block.timestamp;
+  record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
 
   await record.save();
 }

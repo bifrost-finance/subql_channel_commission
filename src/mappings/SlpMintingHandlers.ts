@@ -46,7 +46,7 @@ export async function handleVtokenMintingMinted(
     record.vtokenId = `V${tokenName.toUpperCase()}`;
     record.amount = amount;
     record.blockHeight = blockNumber;
-    record.timestamp = event.block.timestamp;
+    record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
     record.channelCode = channelCode;
 
     await record.save();
@@ -77,7 +77,7 @@ export async function handleVtokenMintingRedeemed(
   record.vtokenId = `V${tokenName.toUpperCase()}`;
   record.amount = amount;
   record.blockHeight = blockNumber;
-  record.timestamp = event.block.timestamp;
+  record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
   record.channelCode = null;
 
   await record.save();

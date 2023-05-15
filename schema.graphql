@@ -18,7 +18,7 @@ type Event @entity {
 
   blockHeight: Int! #Block height of the event
 
-  timestamp: Date!  #Timestamp of the event
+  timestamp: Int!  #Timestamp of the event
 
   # Not mandatory field
   channelCode: String #Channel code of the event. Only for Mint events, not for Redeem and TransferOut events.
@@ -37,7 +37,7 @@ type HostingFeeChargedEvent @entity {
 
   blockHeight: Int! #Block height of the event
 
-  timestamp: Date!  #Timestamp of the event
+  timestamp: Int!  #Timestamp of the event
 }
 
 
@@ -57,6 +57,6 @@ type CommissionPaid @entity {
 
   blockHeight: Int! #Block height of the event
 
-  timestamp: Date!  #Timestamp of the event
+  timestamp: Int!  #Timestamp of the event
 }
 

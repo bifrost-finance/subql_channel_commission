@@ -91,7 +91,7 @@ export async function handleVtokenTransferOut(
     record.vtokenId = vtoken;
     record.amount = amount;
     record.blockHeight = blockNumber;
-    record.timestamp = event.block.timestamp;
+    record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
     record.channelCode = null;
 
     await record.save();
@@ -148,7 +148,7 @@ export async function handleCommissionPaid(
     record.tokenId = token;
     record.amount = amount;
     record.blockHeight = blockNumber;
-    record.timestamp = event.block.timestamp;
+    record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
 
     await record.save();
   }
