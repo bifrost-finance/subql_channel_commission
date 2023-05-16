@@ -31,7 +31,7 @@ export async function handleVtokenMintingMinted(
       const [fromAccount, forChannelCode] = extrinsicEvent.event.data;
 
       if (address.toString() == fromAccount.toString()) {
-        channelCode = `0x${forChannelCode.toString()}`;
+        channelCode = `${forChannelCode.toString()}`;
         logger.info(`remark事件: ${JSON.stringify(extrinsicEvent)}`);
       }
     }
