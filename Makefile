@@ -13,7 +13,7 @@ deploy-test:
 	kubectl apply -f deploy/test/subql.yaml
 
 
-updata-test: build
+update-test: build
 	kubectl set image deploy -n ${NAMESPACE} commission-subql-test commission-subql-test=${IMAGE}
 	kubectl rollout restart deploy -n ${NAMESPACE} commission-subql-test
 
