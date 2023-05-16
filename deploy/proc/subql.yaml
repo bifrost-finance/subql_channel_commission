@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: commission-subql
+    qcloud-app: commission-subql
+  name: commission-subql
+  namespace: commission
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: commission-subql
+      qcloud-app: commission-subql
+  template:
+    metadata:
+      labels:
+        k8s-app: commission-subql
+        qcloud-app: commission-subql
+    spec:
+      containers:
+      - args:
+        - -f=/app
+        - --local
+        - --timestamp-field
+        env:
+        - name: DB_DATABASE
+          value: postgres
+        - name: DB_USER
+          value: postgres
+        - name: DB_PASS
+          value: *
+        - name: DB_HOST
+          value: *
+        - name: DB_PORT
+          value: '*'
+        image: harbor.liebi.com/commission/commission-subql:f2df730
+        imagePullPolicy: Always
+        name: commission-subql
+        resources:
+          limits:
+            cpu: "2"
+            memory: 4Gi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          privileged: false
+      imagePullSecrets:
+      - name: harbor
+      restartPolicy: Always
