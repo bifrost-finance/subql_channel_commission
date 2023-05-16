@@ -13,8 +13,10 @@ repository: https://github.com/subquery/bifrost-subql-starter
 schema:
   file: ./schema.graphql
 network:
-  endpoint: ws://127.0.0.1:9920
-  chainId: "0xb34ab52cbd570a7826d59424290f936cec1468734c8b2fd50c00505329af5178"
+  # test ws://172.19.0.14:9866
+  # proc: http://172.19.64.31:29933
+  endpoint: ws://172.19.0.14:9866
+  chainId: "0x4093592e79a9617b0f00d70c382a141b9e5110768e04db804f06c38deba0ef48"
   dictionary: https://api.subquery.network/sq/subquery/bifrost-parachain-dictionary
   chaintypes:
     file: ./dist/chaintypes.js
