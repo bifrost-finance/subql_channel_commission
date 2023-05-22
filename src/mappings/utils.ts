@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 // 佣金发放账户
 export const PAY_OUT_ACCOUNT =
   "gXCcrjjFX3RPyhHYgwZDmw8oe4JFpd5anko3nTY8VrmnJpe";
@@ -129,4 +131,43 @@ export async function getTokenName(currencyId) {
   }
 
   return tokenName;
+}
+
+// get exchange rate.
+export async function getExchangeRate(currencyId) {
+  const tokenType = Object.keys(currencyId)[0].toUpperCase();
+
+  let token, vtokenIssuance, poolToken;
+  if (tokenType == "TOKEN") {
+    token = Object.values(currencyId)[0].toString().toUpperCase();
+
+    // Get Vtoken issuance storage.
+    vtokenIssuance = new BigNumber(
+      (await api.query.tokens.totalIssuance({ VToken: token })).toString()
+    );
+    // Get token pooltoken storage.
+    poolToken = new BigNumber(
+      (await api.query.vtokenMinting.tokenPool({ Token: token })).toString()
+    );
+    // "TOKEN2"
+  } else {
+    let tokenId = parseInt(Object.values(currencyId)[0] as string);
+
+    // Get vtoken2 issuance storage.
+    vtokenIssuance = new BigNumber(
+      (await api.query.tokens.totalIssuance({ VToken2: tokenId })).toString()
+    );
+    // Get token2 pooltoken storage.
+    poolToken = new BigNumber(
+      (await api.query.vtokenMinting.tokenPool({ Token2: tokenId })).toString()
+    );
+  }
+
+  // Calculate exchange rate.
+  let exchangeRate = new BigNumber(1);
+  if (vtokenIssuance > new BigNumber(0)) {
+    exchangeRate = poolToken.div(vtokenIssuance);
+  }
+
+  return exchangeRate;
 }
