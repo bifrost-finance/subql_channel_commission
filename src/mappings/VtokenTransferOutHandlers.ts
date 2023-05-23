@@ -120,18 +120,19 @@ export async function handleCommissionPaid(
   const account = (address as AccountId).toString();
 
   // If it is vtoken2 and the "to"+ "from" addresses are not vtoken swap pool account and not treasury account.
-  if (
-    (tokenType.startsWith("TOKEN") || tokenType.startsWith("NATIVE")) &&
-    account == PAY_OUT_ACCOUNT
-  ) {
+  if (account == PAY_OUT_ACCOUNT) {
     const amount = (tokenAmount as Balance).toString();
     const toAccount = (to as AccountId).toString();
 
     let token;
-    if (tokenType == "TOKEN" || tokenType == "NATIVE") {
+    if (
+      tokenType == "TOKEN" ||
+      tokenType == "NATIVE" ||
+      tokenType == "VTOKEN"
+    ) {
       token = Object.values(currencyId)[0].toString().toUpperCase();
-      // "TOKEN2"
-    } else {
+      // "VTOKEN2"
+    } else if (tokenType == "VTOKEN2" || tokenType == "TOKEN2") {
       let tokenId = parseInt(Object.values(currencyId)[0] as string);
 
       let metadata = (
@@ -140,12 +141,19 @@ export async function handleCommissionPaid(
 
       let meta = JSON.parse(metadata);
       token = hex_to_ascii(meta.symbol).toUpperCase();
+    } else {
+      return;
+    }
+
+    let transferToken = token;
+    if (tokenType.startsWith("VTOKEN")) {
+      transferToken = `V${token}`;
     }
 
     record.event = "Transfer";
     record.fromAccount = account;
     record.toAccount = toAccount;
-    record.tokenId = token;
+    record.tokenId = transferToken;
     record.amount = amount;
     record.blockHeight = blockNumber;
     record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
