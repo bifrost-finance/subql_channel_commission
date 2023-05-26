@@ -2,41 +2,41 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    k8s-app: commission-subql
-    qcloud-app: commission-subql
-  name: commission-subql
+    k8s-app: kusama-commission-subql
+    qcloud-app: kusama-commission-subql
+  name: kusama-commission-subql
   namespace: commission
 spec:
   replicas: 1
   selector:
     matchLabels:
-      k8s-app: commission-subql
-      qcloud-app: commission-subql
+      k8s-app: kusama-commission-subql
+      qcloud-app: kusama-commission-subql
   template:
     metadata:
       labels:
-        k8s-app: commission-subql
-        qcloud-app: commission-subql
+        k8s-app: kusama-commission-subql
+        qcloud-app: kusama-commission-subql
     spec:
       containers:
       - args:
         - -f=/app
-        - --local
-        - --timestamp-field
+        - --db-schema=public
+        - --disable-historical=true
         env:
         - name: DB_DATABASE
           value: postgres
         - name: DB_USER
           value: postgres
         - name: DB_PASS
-          value: *
+          value: commission-kusama-db-123
         - name: DB_HOST
-          value: *
+          value: 172.19.0.20
         - name: DB_PORT
-          value: '*'
-        image: harbor.liebi.com/commission/commission-subql:f2df730
+          value: '30442'
+        image: harbor.liebi.com/commission/kusama-commission-subql:ee49a98a
         imagePullPolicy: Always
-        name: commission-subql
+        name: kusama-commission-subql
         resources:
           limits:
             cpu: "2"

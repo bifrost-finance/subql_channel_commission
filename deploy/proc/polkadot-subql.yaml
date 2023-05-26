@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: polkadot-commission-subql
+    qcloud-app: polkadot-commission-subql
+  name: polkadot-commission-subql
+  namespace: commission
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: polkadot-commission-subql
+      qcloud-app: polkadot-commission-subql
+  template:
+    metadata:
+      labels:
+        k8s-app: polkadot-commission-subql
+        qcloud-app: polkadot-commission-subql
+    spec:
+      containers:
+      - args:
+        - -f=/app
+        - --db-schema=public
+        - --disable-historical=true
+        env:
+        - name: DB_DATABASE
+          value: postgres
+        - name: DB_USER
+          value: postgres
+        - name: DB_PASS
+          value: *
+        - name: DB_HOST
+          value: *
+        - name: DB_PORT
+          value: '*'
+        image: harbor.liebi.com/commission/polkadot-commission-subql:ee49a98a
+        imagePullPolicy: Always
+        name: polkadot-commission-subql
+        resources:
+          limits:
+            cpu: "2"
+            memory: 4Gi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          privileged: false
+      imagePullSecrets:
+      - name: harbor
+      restartPolicy: Always
