@@ -2,6 +2,7 @@ import { getTokenName } from "./utils";
 import { SubstrateEvent } from "@subql/types";
 import { Balance, AccountId } from "@polkadot/types/interfaces";
 import { Event } from "../types";
+import BigNumber from "bignumber.js";
 
 // Handing talbe【VtokenMinting】, Event【Minted】
 export async function handleVtokenMintingMinted(
@@ -46,7 +47,7 @@ export async function handleVtokenMintingMinted(
       record.event = "Mint";
       record.account = account;
       record.vtokenId = `V${tokenName.toUpperCase()}`;
-      record.amount = amount;
+      record.amount = new BigNumber(amount).toFixed(0);
       record.blockHeight = blockNumber;
       record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
       record.channelCode = channelCode;
@@ -78,7 +79,7 @@ export async function handleVtokenMintingRedeemed(
   record.event = "Redeem";
   record.account = account;
   record.vtokenId = `V${tokenName.toUpperCase()}`;
-  record.amount = amount;
+  record.amount = new BigNumber(amount).toFixed(0);
   record.blockHeight = blockNumber;
   record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
   record.channelCode = null;

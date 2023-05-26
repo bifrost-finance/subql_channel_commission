@@ -31,7 +31,7 @@ export async function handleSlpHostingFeeCharged(
   // 如果是FIL，直接用amount
   if (tokenName == "FIL") {
     record.tokenId = tokenName;
-    record.amount = amount;
+    record.amount = new BigNumber(amount).toFixed(0);
     // 如果是其他token，需要除以exchangeRatey变成vtoken金额
   } else {
     record.tokenId = vtokenName;

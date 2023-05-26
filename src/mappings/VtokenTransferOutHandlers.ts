@@ -2,6 +2,7 @@ import { SubstrateEvent } from "@subql/types";
 import { Event, CommissionPaid } from "../types";
 import { Balance, AccountId } from "@polkadot/types/interfaces";
 import { hex_to_ascii, PAY_OUT_ACCOUNT } from "./utils";
+import BigNumber from "bignumber.js";
 
 // Handing talbe【Tokens】, Event【Transfer】
 export async function handleVtokenTransferOut(
@@ -89,7 +90,7 @@ export async function handleVtokenTransferOut(
     record.event = "TransferOut";
     record.account = account;
     record.vtokenId = vtoken;
-    record.amount = amount;
+    record.amount = new BigNumber(amount).toFixed(0);
     record.blockHeight = blockNumber;
     record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
     record.channelCode = null;
@@ -154,7 +155,7 @@ export async function handleCommissionPaid(
     record.fromAccount = account;
     record.toAccount = toAccount;
     record.tokenId = transferToken;
-    record.amount = amount;
+    record.amount = new BigNumber(amount).toFixed(0);
     record.blockHeight = blockNumber;
     record.timestamp = Math.floor(event.block.timestamp.getTime() / 1000);
 
