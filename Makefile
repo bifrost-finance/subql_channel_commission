@@ -33,11 +33,11 @@ update: build
 	kubectl rollout restart deploy -n ${NAMESPACE} commission-subql
 
 update-polkadot: build-polkadot
-	kubectl set image deploy -n ${NAMESPACE} polkadot-commission-subql polkadot-commission-subql=${IMAGE}
+	kubectl set image deploy -n ${NAMESPACE} polkadot-commission-subql polkadot-commission-subql=${IMAGE-P}
 	kubectl rollout restart deploy -n ${NAMESPACE} polkadot-commission-subql
 
 update-kusama: build-kusama
-	kubectl set image deploy -n ${NAMESPACE} kusama-commission-subql kusama-commission-subql=${IMAGE}
+	kubectl set image deploy -n ${NAMESPACE} kusama-commission-subql kusama-commission-subql=${IMAGE-K}
 	kubectl rollout restart deploy -n ${NAMESPACE} kusama-commission-subql
 
 
