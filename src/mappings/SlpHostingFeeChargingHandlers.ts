@@ -28,6 +28,8 @@ export async function handleSlpHostingFeeCharged(
   const amount = (tokenAmount as Balance).toString();
   const exchangeRate = await getExchangeRate(currencyId);
 
+  logger.info(`${JSON.stringify(currencyId)}`);
+
   // 如果是FIL，直接用amount
   if (tokenName == "FIL") {
     record.tokenId = tokenName;
