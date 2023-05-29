@@ -23,12 +23,13 @@ export async function handleSlpHostingFeeCharged(
     },
   } = evt;
 
+
+  logger.info(`${JSON.stringify(currencyId)}`);
+
   const tokenName = await getTokenName(currencyId);
   const vtokenName = `V${tokenName.toUpperCase()}`;
   const amount = (tokenAmount as Balance).toString();
   const exchangeRate = await getExchangeRate(currencyId);
-
-  logger.info(`${JSON.stringify(currencyId)}`);
 
   // 如果是FIL，直接用amount
   if (tokenName == "FIL") {
