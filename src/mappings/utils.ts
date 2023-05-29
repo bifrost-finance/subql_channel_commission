@@ -116,6 +116,9 @@ export function hex_to_ascii(str1) {
 export async function getTokenName(currencyId) {
   let tokenName;
 
+  logger.info(`currencyId: ${JSON.stringify(currencyId)}`);
+  logger.info(`currencyId.native: ${JSON.stringify(currencyId.native)}`);
+
   if (currencyId.token || currencyId.native) {
     tokenName = currencyId.token ? currencyId.token : currencyId.native;
     // token2 type
