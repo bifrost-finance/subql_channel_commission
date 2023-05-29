@@ -116,9 +116,6 @@ export function hex_to_ascii(str1) {
 export async function getTokenName(currencyId) {
   let tokenName;
 
-  logger.info(`currencyId: ${JSON.stringify(currencyId)}`);
-  logger.info(`currencyId.native: ${JSON.stringify(currencyId.native)}`);
-
   if (currencyId.token || currencyId.native) {
     tokenName = currencyId.token ? currencyId.token : currencyId.native;
     // token2 type
@@ -141,7 +138,7 @@ export async function getExchangeRate(currencyId) {
   const tokenType = Object.keys(currencyId)[0].toUpperCase();
 
   let token, vtokenIssuance, poolToken;
-  if (tokenType == "TOKEN") {
+  if (tokenType == "TOKEN" || tokenType == "NATIVE") {
     token = Object.values(currencyId)[0].toString().toUpperCase();
 
     // Get Vtoken issuance storage.
@@ -149,9 +146,15 @@ export async function getExchangeRate(currencyId) {
       (await api.query.tokens.totalIssuance({ VToken: token })).toString()
     );
     // Get token pooltoken storage.
-    poolToken = new BigNumber(
-      (await api.query.vtokenMinting.tokenPool({ Token: token })).toString()
-    );
+    if (tokenType == "NATIVE") {
+      poolToken = new BigNumber(
+        (await api.query.vtokenMinting.tokenPool({ Native: token })).toString()
+      );
+    } else {
+      poolToken = new BigNumber(
+        (await api.query.vtokenMinting.tokenPool({ Token: token })).toString()
+      );
+    }
     // "TOKEN2"
   } else {
     let tokenId = parseInt(Object.values(currencyId)[0] as string);
