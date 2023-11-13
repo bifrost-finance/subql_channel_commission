@@ -17,7 +17,7 @@ export async function handleVtokenMintingMinted(
 
   const {
     event: {
-      data: [address, currencyId, _tokenAmount, vtokenAmount],
+      data: [address, currencyId, _tokenAmount, vtokenAmount, _fee, remark],
     },
   } = evt;
 
@@ -25,7 +25,12 @@ export async function handleVtokenMintingMinted(
   let channelCode =
     "0x2597b02db29adca18d6f70a494955f58f2a11895b0c3873d71db5172be390f99";
 
-  if (event.extrinsic) {
+    // 如果remark不为空，说明是带渠道的
+  if (remark.toString() != "") {
+    channelCode = `${remark.toString()}`;
+    logger.info(`找到remark: ${channelCode}`);
+    // 兼容老的batch remark
+  } else if (event.extrinsic) {
     // 先看看这个mint是不是带渠道的
     let extrinsicEvents = event.extrinsic.events;
     // 看看这个extrinsic的event数组里有没有Minted事件和remark事件。因为这是从Minted事件进去的，所以只需要找有没有remark事件就好
@@ -38,7 +43,8 @@ export async function handleVtokenMintingMinted(
           logger.info(`remark事件: ${JSON.stringify(extrinsicEvent)}`);
         }
       }
-
+    }
+  }
       // token type
       const tokenName = await getTokenName(currencyId);
       const account = (address as AccountId).toString();
@@ -53,8 +59,8 @@ export async function handleVtokenMintingMinted(
       record.channelCode = channelCode;
 
       await record.save();
-    }
-  }
+    
+  
 }
 
 // Handing talbe【VtokenMinting】, Event【Redeemed】
