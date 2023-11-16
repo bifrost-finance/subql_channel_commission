@@ -3,6 +3,7 @@ import { SubstrateEvent } from "@subql/types";
 import { Balance, AccountId } from "@polkadot/types/interfaces";
 import { Event } from "../types";
 import BigNumber from "bignumber.js";
+import { hexToString, u8aToHex } from '@polkadot/util';
 
 // Handing talbe【VtokenMinting】, Event【Minted】
 export async function handleVtokenMintingMinted(
@@ -26,9 +27,8 @@ export async function handleVtokenMintingMinted(
     "0x2597b02db29adca18d6f70a494955f58f2a11895b0c3873d71db5172be390f99";
 
     // 如果remark不为空，说明是带渠道的
-  if (remark.toString() != "") {
+  if (remark.toString() != "" && remark.toString() != "0x") {
     channelCode = `${remark.toString()}`;
-    logger.info(`找到remark: ${channelCode}`);
     // 兼容老的batch remark
   } else if (event.extrinsic) {
     // 先看看这个mint是不是带渠道的
