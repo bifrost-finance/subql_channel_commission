@@ -65,7 +65,9 @@ export async function handleVtokenTransferOut(
     "eCSrvaystgdffuJxPVPVePp3f8Zegp8AuNsTv4FApKHtAt9",
     "eCSrvaystgdffuJxPVLqSvWj7Qbjjd11SJEdYBQzs3FdYSk",
     "eCSrvaystgdffuJxPVSiQp5vXbGHHEbgQQQUaVb2ychB9Vz",
-    "eCSrvbA5gGLejANY2XNJzg7B8cB4mBx8Rbw4tXHpY6GK5YE",
+    "eLHN5Pnz8aS3Dravd6Kt9LpSJiWPbSC25RS5a4wsfG6DYBX",
+    "eLHN5PoPNgo5TiCZt3nGWcxda3LgKJSDVs5LnQ54FL2g7q3",
+    "eLHN5PtbY7WaZqBvEUhHHEoA1GARhZcmycRkYggRtDEZHud",
   ];
 
   // If it is vtoken2 and the "to"+ "from" addresses are not vtoken swap pool account and not treasury account.
